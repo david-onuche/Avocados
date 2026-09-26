@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct AvocadosApp: App {
+    @State private var isShowingLaunchScreen: Bool = true
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -25,7 +27,22 @@ struct AvocadosApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ZStack {
+                if isShowingLaunchScreen {
+                    LaunchScreenView()
+                        .transition(.opacity)
+                } else {
+                    AppView()
+                        .transition(.opacity)
+                }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                    withAnimation(.easeOut(duration: 0.8)) {
+                        isShowingLaunchScreen = false
+                    }
+                }
+            }
         }
         .modelContainer(sharedModelContainer)
     }
